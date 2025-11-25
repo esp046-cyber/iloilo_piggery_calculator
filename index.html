@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iloilo Piggery Backyard Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 10px 10px 0 0;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        .tab:hover {
+            background: #e0e0e0;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h3::before {
+            content: '🐷';
+            font-size: 1.2em;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        .input-group input,
+        .input-group select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-group .unit {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 35px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 25px;
+        }
+
+        .results h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .result-card.success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .result-card.warning {
+            background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+        }
+
+        .result-card.info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .result-card label {
+            display: block;
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .result-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .breakdown-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .breakdown-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .breakdown-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .breakdown-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .breakdown-table .total-row {
+            background: #f0f0f0;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .info-box h4 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #555;
+        }
+
+        .info-box li {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                border-radius: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐷 Iloilo Piggery Calculator</h1>
+            <p>Comprehensive Backyard Pig Farming Cost & Profit Calculator</p>
+        </div>
+
+        <div class="content">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('basic')">Basic Calculator</button>
+                <button class="tab" onclick="switchTab('detailed')">Detailed Costing</button>
+                <button class="tab" onclick="switchTab('batch')">Batch Management</button>
+                <button class="tab" onclick="switchTab('prices')">Price Settings</button>
+            </div>
+
+            <!-- Basic Calculator Tab -->
+            <div id="basic" class="tab-content active">
+                <div class="section">
+                    <h3>Pig Information</h3>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Number of Pigs</label>
+                            <input type="number" id="numPigs" value="5" min="1">
+                        </div>
+                        <div class="input-group">
+                            <label>Starting Weight (kg)</label>
+                            <input type="number" id="startWeight" value="15" min="1" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Target Weight (kg)</label>
+                            <input type="number" id="targetWeight" value="100" min="1" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Pig Type</label>
+                            <select id="pigType">
+                                <option value="grower">Grower (15-40kg)</option>
+                                <option value="finisher" selected>Finisher (40-100kg)</option>
+                                <option value="breeder">Breeder</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Feeding Program</h3>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Daily Feed per Pig (kg)</label>
+                            <input type="number" id="dailyFeed" value="2.5" min="0.1" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Feed Cost per Bag (50kg)</label>
+                            <input type="number" id="feedCost" value="1200" min="1">
+                            <span class="unit">PHP</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Growing Period (days)</label>
+                            <input type="number" id="growingDays" value="120" min="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn" onclick="calculateBasic()">Calculate Profit</button>
+                </div>
+
+                <div id="basicResults" class="results" style="display:none;"></div>
+            </div>
+
+            <!-- Detailed Costing Tab -->
+            <div id="detailed" class="tab-content">
+                <div class="section">
+                    <h3>Initial Investment</h3>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Piglet Cost (per head)</label>
+                            <input type="number" id="pigletCost" value="3500" min="0">
+                            <span class="unit">PHP</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Housing/Pen Construction</label>
+                            <input type="number" id="housingCost" value="15000" min="0">
+                            <span class="unit">PHP</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Feeders & Waterers</label>
+                            <input type="number" id="equipmentCost" value="3000" min="0">
+                            <span class="unit">PHP</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Operating Expenses</h3>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Veterinary & Medicine (per cycle)</label>
+                            <input type="number" id="vetCost" value="500" min="0">
+                            <span class="unit">PHP per pig</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Vitamins & Supplements</label>
+                            <input type="number" id="vitaminsCost" value="300" min="0">
+                            <span class="unit">PHP per pig</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Electricity & Water (monthly)</label>
+                            <input type="number" id="utilitiesCost" value="800" min="0">
+                            <span class="unit">PHP</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Labor Cost (monthly)</label>
+                            <input type="number" id="laborCost" value="3000" min="0">
+                            <span class="unit">PHP</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Miscellaneous (monthly)</label>
+                            <input type="number" id="miscCost" value="500" min="0">
+                            <span class="unit">PHP</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Revenue</h3>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Selling Price per kg (Live Weight)</label>
+                            <input type="number" id="sellingPrice" value="140" min="0">
+                            <span class="unit">PHP</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Mortality Rate (%)</label>
+                            <input type="number" id="mortalityRate" value="5" min="0" max="100" step="0.1">
+                            <span class="unit">Percentage</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn" onclick="calculateDetailed()">Calculate Detailed Costing</button>
+                </div>
+
+                <div id="detailedResults" class="results" style="display:none;"></div>
+            </div>
+
+            <!-- Batch Management Tab -->
+            <div id="batch" class="tab-content">
+                <div class="section">
+                    <h3>Batch Planning</h3>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Number of Batches per Year</label>
+                            <input type="number" id="batchesPerYear" value="3" min="1" max="12">
+                        </div>
+                        <div class="input-group">
+                            <label>Pigs per Batch</label>
+                            <input type="number" id="pigsPerBatch" value="10" min="1">
+                        </div>
+                        <div class="input-group">
+                            <label>Days Between Batches</label>
+                            <input type="number" id="daysBetween" value="14" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn" onclick="calculateBatch()">Calculate Annual Projection</button>
+                </div>
+
+                <div id="batchResults" class="results" style="display:none;"></div>
+            </div>
+
+            <!-- Price Settings Tab -->
+            <div id="prices" class="tab-content">
+                <div class="section">
+                    <h3>Current Market Prices in Iloilo (2024)</h3>
+                    <div class="info-box">
+                        <h4>📊 Reference Prices:</h4>
+                        <ul>
+                            <li><strong>Piglets (15kg):</strong> ₱3,000 - ₱4,000</li>
+                            <li><strong>Commercial Feeds:</strong> ₱1,100 - ₱1,300 per 50kg bag</li>
+                            <li><strong>Live Pig Price:</strong> ₱130 - ₱150 per kg</li>
+                            <li><strong>Dressed Pig Price:</strong> ₱180 - ₱220 per kg</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Feed Conversion Ratio (FCR)</h3>
+                    <div class="info-box">
+                        <h4>🎯 Target FCR by Stage:</h4>
+                        <ul>
+                            <li><strong>Pre-starter (7-15kg):</strong> FCR 1.3 - 1.5</li>
+                            <li><strong>Starter (15-30kg):</strong> FCR 1.8 - 2.0</li>
+                            <li><strong>Grower (30-60kg):</strong> FCR 2.3 - 2.5</li>
+                            <li><strong>Finisher (60-100kg):</strong> FCR 2.8 - 3.2</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Tips for Iloilo Pig Farmers</h3>
+                    <div class="info-box">
+                        <h4>💡 Best Practices:</h4>
+                        <ul>
+                            <li>Buy piglets from accredited suppliers (check DA-BAI certification)</li>
+                            <li>Maintain good biosecurity to prevent diseases (ASF prevention)</li>
+                            <li>Use locally available feed ingredients to reduce costs</li>
+                            <li>Join cooperative or farmers' groups for bulk buying discounts</li>
+                            <li>Keep accurate records of expenses and pig performance</li>
+                            <li>Market directly to buyers to get better prices</li>
+                            <li>Consult LGU or DA-Western Visayas for technical assistance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state management
+        const state = {
+            calculations: {},
+            history: []
+        };
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Basic Calculator
+        function calculateBasic() {
+            const numPigs = parseFloat(document.getElementById('numPigs').value);
+            const startWeight = parseFloat(document.getElementById('startWeight').value);
+            const targetWeight = parseFloat(document.getElementById('targetWeight').value);
+            const dailyFeed = parseFloat(document.getElementById('dailyFeed').value);
+            const feedCost = parseFloat(document.getElementById('feedCost').value);
+            const growingDays = parseFloat(document.getElementById('growingDays').value);
+            const pigletCost = parseFloat(document.getElementById('pigletCost').value) || 3500;
+            const sellingPrice = parseFloat(document.getElementById('sellingPrice').value) || 140;
+            const mortalityRate = parseFloat(document.getElementById('mortalityRate').value) || 5;
+
+            // Calculations
+            const weightGain = targetWeight - startWeight;
+            const totalFeedPerPig = dailyFeed * growingDays;
+            const feedBagsPerPig = totalFeedPerPig / 50;
+            const feedCostPerPig = feedBagsPerPig * feedCost;
+            const totalFeedCost = feedCostPerPig * numPigs;
+            const pigletTotalCost = pigletCost * numPigs;
+            const totalCost = totalFeedCost + pigletTotalCost;
+
+            // Revenue calculation with mortality
+            const survivingPigs = numPigs * (1 - mortalityRate / 100);
+            const totalRevenue = survivingPigs * targetWeight * sellingPrice;
+            const netProfit = totalRevenue - totalCost;
+            const profitPerPig = netProfit / numPigs;
+            const roi = (netProfit / totalCost) * 100;
+
+            // Display results
+            const resultsDiv = document.getElementById('basicResults');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `
+                <h3>💰 Financial Summary</h3>
+                <div class="result-grid">
+                    <div class="result-card info">
+                        <label>Total Investment</label>
+                        <div class="value">₱${totalCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card success">
+                        <label>Expected Revenue</label>
+                        <div class="value">₱${totalRevenue.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card ${netProfit > 0 ? 'success' : 'warning'}">
+                        <label>Net Profit</label>
+                        <div class="value">₱${netProfit.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card info">
+                        <label>Profit per Pig</label>
+                        <div class="value">₱${profitPerPig.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card ${roi > 20 ? 'success' : 'warning'}">
+                        <label>ROI</label>
+                        <div class="value">${roi.toFixed(1)}%</div>
+                    </div>
+                    <div class="result-card info">
+                        <label>Surviving Pigs</label>
+                        <div class="value">${survivingPigs.toFixed(1)}</div>
+                    </div>
+                </div>
+
+                <table class="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Amount (PHP)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Piglets (${numPigs} heads)</td>
+                            <td>₱${pigletCost.toLocaleString()} each</td>
+                            <td>₱${pigletTotalCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td>Feed Cost (${growingDays} days)</td>
+                            <td>${(feedBagsPerPig * numPigs).toFixed(1)} bags</td>
+                            <td>₱${totalFeedCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="2">Total Expenses</td>
+                            <td>₱${totalCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td>Revenue (${survivingPigs.toFixed(1)} pigs @ ${targetWeight}kg)</td>
+                            <td>₱${sellingPrice}/kg</td>
+                            <td>₱${totalRevenue.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr class="total-row" style="color: ${netProfit > 0 ? 'green' : 'red'}">
+                            <td colspan="2">Net Profit</td>
+                            <td>₱${netProfit.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <h4>📈 Performance Metrics</h4>
+                    <ul>
+                        <li><strong>Average Daily Gain:</strong> ${(weightGain / growingDays).toFixed(2)} kg/day</li>
+                        <li><strong>Feed Conversion Ratio:</strong> ${(totalFeedPerPig / weightGain).toFixed(2)}</li>
+                        <li><strong>Feed Cost per kg Gain:</strong> ₱${(feedCostPerPig / weightGain).toFixed(2)}</li>
+                        <li><strong>Break-even Price:</strong> ₱${(totalCost / (survivingPigs * targetWeight)).toFixed(2)}/kg</li>
+                        <li><strong>Growing Period:</strong> ${growingDays} days (${(growingDays / 30).toFixed(1)} months)</li>
+                    </ul>
+                </div>
+            `;
+
+            // Store calculation in state
+            state.calculations.basic = {
+                totalCost,
+                totalRevenue,
+                netProfit,
+                roi
+            };
+        }
+
+        // Detailed Costing Calculator
+        function calculateDetailed() {
+            const numPigs = parseFloat(document.getElementById('numPigs').value);
+            const startWeight = parseFloat(document.getElementById('startWeight').value);
+            const targetWeight = parseFloat(document.getElementById('targetWeight').value);
+            const dailyFeed = parseFloat(document.getElementById('dailyFeed').value);
+            const feedCost = parseFloat(document.getElementById('feedCost').value);
+            const growingDays = parseFloat(document.getElementById('growingDays').value);
+            
+            const pigletCost = parseFloat(document.getElementById('pigletCost').value);
+            const housingCost = parseFloat(document.getElementById('housingCost').value);
+            const equipmentCost = parseFloat(document.getElementById('equipmentCost').value);
+            const vetCost = parseFloat(document.getElementById('vetCost').value);
+            const vitaminsCost = parseFloat(document.getElementById('vitaminsCost').value);
+            const utilitiesCost = parseFloat(document.getElementById('utilitiesCost').value);
+            const laborCost = parseFloat(document.getElementById('laborCost').value);
+            const miscCost = parseFloat(document.getElementById('miscCost').value);
+            const sellingPrice = parseFloat(document.getElementById('sellingPrice').value);
+            const mortalityRate = parseFloat(document.getElementById('mortalityRate').value);
+
+            // Calculate months
+            const months = growingDays / 30;
+
+            // Feed costs
+            const totalFeedPerPig = dailyFeed * growingDays;
+            const feedBagsPerPig = totalFeedPerPig / 50;
+            const feedCostPerPig = feedBagsPerPig * feedCost;
+            const totalFeedCost = feedCostPerPig * numPigs;
+
+            // Initial investment
+            const pigletTotalCost = pigletCost * numPigs;
+            const initialInvestment = pigletTotalCost + housingCost + equipmentCost;
+
+            // Operating expenses
+            const vetTotal = vetCost * numPigs;
+            const vitaminsTotal = vitaminsCost * numPigs;
+            const utilitiesTotal = utilitiesCost * months;
+            const laborTotal = laborCost * months;
+            const miscTotal = miscCost * months;
+            const operatingExpenses = vetTotal + vitaminsTotal + utilitiesTotal + laborTotal + miscTotal;
+
+            // Total costs
+            const totalCost = initialInvestment + totalFeedCost + operatingExpenses;
+
+            // Revenue
+            const survivingPigs = numPigs * (1 - mortalityRate / 100);
+            const totalRevenue = survivingPigs * targetWeight * sellingPrice;
+            const netProfit = totalRevenue - totalCost;
+            const profitPerPig = netProfit / numPigs;
+            const roi = (netProfit / totalCost) * 100;
+
+            // Display results
+            const resultsDiv = document.getElementById('detailedResults');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `
+                <h3>📊 Comprehensive Cost Analysis</h3>
+                <div class="result-grid">
+                    <div class="result-card info">
+                        <label>Initial Investment</label>
+                        <div class="value">₱${initialInvestment.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card warning">
+                        <label>Operating Expenses</label>
+                        <div class="value">₱${operatingExpenses.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card info">
+                        <label>Feed Cost</label>
+                        <div class="value">₱${totalFeedCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card info">
+                        <label>Total Investment</label>
+                        <div class="value">₱${totalCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card success">
+                        <label>Expected Revenue</label>
+                        <div class="value">₱${totalRevenue.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card ${netProfit > 0 ? 'success' : 'warning'}">
+                        <label>Net Profit</label>
+                        <div class="value">₱${netProfit.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card info">
+                        <label>Profit per Pig</label>
+                        <div class="value">₱${profitPerPig.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card ${roi > 20 ? 'success' : 'warning'}">
+                        <label>Return on Investment</label>
+                        <div class="value">${roi.toFixed(1)}%</div>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 30px; color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">💼 Initial Investment Breakdown</h4>
+                <table class="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Details</th>
+                            <th>Amount (PHP)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Piglets</td>
+                            <td>${numPigs} heads @ ₱${pigletCost.toLocaleString()}</td>
+                            <td>₱${pigletTotalCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td>Housing/Pen Construction</td>
+                            <td>One-time setup</td>
+                            <td>₱${housingCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td>Feeders & Waterers</td>
+                            <td>Equipment</td>
+                            <td>₱${equipmentCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="2">Total Initial Investment</td>
+                            <td>₱${initialInvestment.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin-top: 30px; color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">🔄 Operating Expenses (${months.toFixed(1)} months)</h4>
+                <table class="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Details</th>
+                            <th>Amount (PHP)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Feed</td>
+                            <td>${(feedBagsPerPig * numPigs).toFixed(1)} bags @ ₱${feedCost.toLocaleString()}</td>
+                            <td>₱${totalFeedCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td>Veterinary & Medicine</td>
+                            <td>₱${vetCost.toLocaleString()} per pig × ${numPigs}</td>
+                            <td>₱${vetTotal.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td>Vitamins & Supplements</td>
+                            <td>₱${vitaminsCost.toLocaleString()} per pig × ${numPigs}</td>
+                            <td>₱${vitaminsTotal.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td>Utilities (Electricity & Water)</td>
+                            <td>₱${utilitiesCost.toLocaleString()} × ${months.toFixed(1)} months</td>
+                            <td>₱${utilitiesTotal.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td>Labor</td>
+                            <td>₱${laborCost.toLocaleString()} × ${months.toFixed(1)} months</td>
+                            <td>₱${laborTotal.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td>Miscellaneous</td>
+                            <td>₱${miscCost.toLocaleString()} × ${months.toFixed(1)} months</td>
+                            <td>₱${miscTotal.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="2">Total Operating Expenses</td>
+                            <td>₱${(totalFeedCost + operatingExpenses).toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin-top: 30px; color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">💰 Revenue & Profit Summary</h4>
+                <table class="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Details</th>
+                            <th>Amount (PHP)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Total Investment</td>
+                            <td>Initial + Operating</td>
+                            <td>₱${totalCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td>Expected Revenue</td>
+                            <td>${survivingPigs.toFixed(1)} pigs × ${targetWeight}kg × ₱${sellingPrice}/kg</td>
+                            <td>₱${totalRevenue.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td>Mortality Loss</td>
+                            <td>${mortalityRate}% (${(numPigs - survivingPigs).toFixed(1)} pigs)</td>
+                            <td style="color: red;">-₱${((numPigs - survivingPigs) * targetWeight * sellingPrice).toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr class="total-row" style="color: ${netProfit > 0 ? 'green' : 'red'}; font-size: 1.2em;">
+                            <td colspan="2"><strong>NET PROFIT</strong></td>
+                            <td><strong>₱${netProfit.toLocaleString('en-PH', {maximumFractionDigits: 2})}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <h4>📈 Financial Indicators</h4>
+                    <ul>
+                        <li><strong>Return on Investment (ROI):</strong> ${roi.toFixed(2)}% ${roi > 20 ? '✅ Excellent' : roi > 10 ? '⚠️ Fair' : '❌ Low'}</li>
+                        <li><strong>Profit per Pig:</strong> ₱${profitPerPig.toLocaleString('en-PH', {maximumFractionDigits: 2})}</li>
+                        <li><strong>Break-even Price:</strong> ₱${(totalCost / (survivingPigs * targetWeight)).toFixed(2)}/kg</li>
+                        <li><strong>Profit Margin:</strong> ${((netProfit / totalRevenue) * 100).toFixed(2)}%</li>
+                        <li><strong>Cost per kg Produced:</strong> ₱${(totalCost / (survivingPigs * targetWeight)).toFixed(2)}</li>
+                        <li><strong>Feed Cost Percentage:</strong> ${((totalFeedCost / totalCost) * 100).toFixed(1)}% of total cost</li>
+                        <li><strong>Growing Period:</strong> ${growingDays} days (${months.toFixed(1)} months)</li>
+                    </ul>
+                </div>
+
+                <div class="info-box" style="background: ${netProfit > 0 ? '#e8f5e9' : '#fff3e0'}; border-left-color: ${netProfit > 0 ? '#4caf50' : '#ff9800'};">
+                    <h4>${netProfit > 0 ? '✅ Profitability Analysis' : '⚠️ Cost Optimization Tips'}</h4>
+                    <ul>
+                        ${netProfit > 0 ? `
+                            <li>Your operation is profitable with a ${roi.toFixed(1)}% ROI</li>
+                            <li>Expected profit of ₱${profitPerPig.toLocaleString('en-PH', {maximumFractionDigits: 2})} per pig</li>
+                            <li>Consider expanding if you have good market access</li>
+                            <li>Maintain excellent biosecurity to reduce mortality</li>
+                        ` : `
+                            <li>Consider negotiating better piglet prices or feed costs</li>
+                            <li>Look for higher-paying buyers or direct marketing</li>
+                            <li>Reduce mortality rate through better management</li>
+                            <li>Optimize feed conversion by improving nutrition program</li>
+                            <li>Consider value-adding (processed products) for better margins</li>
+                        `}
+                    </ul>
+                </div>
+            `;
+
+            state.calculations.detailed = {
+                totalCost,
+                totalRevenue,
+                netProfit,
+                roi,
+                initialInvestment,
+                operatingExpenses
+            };
+        }
+
+        // Batch Management Calculator
+        function calculateBatch() {
+            const batchesPerYear = parseFloat(document.getElementById('batchesPerYear').value);
+            const pigsPerBatch = parseFloat(document.getElementById('pigsPerBatch').value);
+            const daysBetween = parseFloat(document.getElementById('daysBetween').value);
+            const growingDays = parseFloat(document.getElementById('growingDays').value) || 120;
+            
+            // Get data from detailed calculator
+            const pigletCost = parseFloat(document.getElementById('pigletCost').value) || 3500;
+            const feedCost = parseFloat(document.getElementById('feedCost').value) || 1200;
+            const dailyFeed = parseFloat(document.getElementById('dailyFeed').value) || 2.5;
+            const targetWeight = parseFloat(document.getElementById('targetWeight').value) || 100;
+            const sellingPrice = parseFloat(document.getElementById('sellingPrice').value) || 140;
+            const mortalityRate = parseFloat(document.getElementById('mortalityRate').value) || 5;
+
+            // Calculate per batch
+            const feedPerPig = dailyFeed * growingDays;
+            const feedBagsPerPig = feedPerPig / 50;
+            const feedCostPerPig = feedBagsPerPig * feedCost;
+            const costPerPig = pigletCost + feedCostPerPig;
+            const costPerBatch = costPerPig * pigsPerBatch;
+
+            const survivingPigsPerBatch = pigsPerBatch * (1 - mortalityRate / 100);
+            const revenuePerBatch = survivingPigsPerBatch * targetWeight * sellingPrice;
+            const profitPerBatch = revenuePerBatch - costPerBatch;
+
+            // Annual calculations
+            const totalPigsPerYear = pigsPerBatch * batchesPerYear;
+            const totalAnnualCost = costPerBatch * batchesPerYear;
+            const totalAnnualRevenue = revenuePerBatch * batchesPerYear;
+            const totalAnnualProfit = profitPerBatch * batchesPerYear;
+            const annualROI = (totalAnnualProfit / totalAnnualCost) * 100;
+
+            // Monthly cash flow
+            const monthlyRevenue = totalAnnualRevenue / 12;
+            const monthlyCost = totalAnnualCost / 12;
+            const monthlyProfit = totalAnnualProfit / 12;
+
+            // Display results
+            const resultsDiv = document.getElementById('batchResults');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `
+                <h3>📅 Annual Batch Projection</h3>
+                <div class="result-grid">
+                    <div class="result-card info">
+                        <label>Batches per Year</label>
+                        <div class="value">${batchesPerYear}</div>
+                    </div>
+                    <div class="result-card info">
+                        <label>Total Pigs/Year</label>
+                        <div class="value">${totalPigsPerYear}</div>
+                    </div>
+                    <div class="result-card warning">
+                        <label>Annual Investment</label>
+                        <div class="value">₱${totalAnnualCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card success">
+                        <label>Annual Revenue</label>
+                        <div class="value">₱${totalAnnualRevenue.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card ${totalAnnualProfit > 0 ? 'success' : 'warning'}">
+                        <label>Annual Profit</label>
+                        <div class="value">₱${totalAnnualProfit.toLocaleString('en-PH', {maximumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="result-card ${annualROI > 20 ? 'success' : 'warning'}">
+                        <label>Annual ROI</label>
+                        <div class="value">${annualROI.toFixed(1)}%</div>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 30px; color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">📊 Per Batch Analysis</h4>
+                <table class="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                            <th>Amount (PHP)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Pigs per Batch</td>
+                            <td>${pigsPerBatch} heads</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Cost per Batch</td>
+                            <td>₱${costPerPig.toLocaleString('en-PH', {maximumFractionDigits: 2})} per pig</td>
+                            <td>₱${costPerBatch.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td>Revenue per Batch</td>
+                            <td>${survivingPigsPerBatch.toFixed(1)} pigs × ${targetWeight}kg × ₱${sellingPrice}</td>
+                            <td>₱${revenuePerBatch.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr class="total-row" style="color: ${profitPerBatch > 0 ? 'green' : 'red'};">
+                            <td>Profit per Batch</td>
+                            <td>-</td>
+                            <td>₱${profitPerBatch.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin-top: 30px; color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">💵 Monthly Cash Flow Average</h4>
+                <table class="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Monthly Average</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Monthly Investment</td>
+                            <td>₱${monthlyCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td>Monthly Revenue</td>
+                            <td>₱${monthlyRevenue.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr class="total-row" style="color: ${monthlyProfit > 0 ? 'green' : 'red'};">
+                            <td>Monthly Profit</td>
+                            <td>₱${monthlyProfit.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin-top: 30px; color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">📅 Batch Schedule Timeline</h4>
+                <table class="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Batch #</th>
+                            <th>Start Day</th>
+                            <th>Harvest Day</th>
+                            <th>Expected Profit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${generateBatchSchedule(batchesPerYear, daysBetween, growingDays, profitPerBatch)}
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <h4>💡 Batch Management Tips for Iloilo Farmers</h4>
+                    <ul>
+                        <li><strong>Staggered Batches:</strong> Maintain continuous cash flow by spacing batches ${daysBetween} days apart</li>
+                        <li><strong>Peak Seasons:</strong> Time harvests for Christmas (Dec), New Year (Jan), and town fiestas</li>
+                        <li><strong>Market Planning:</strong> Coordinate with local butchers and lechon makers in advance</li>
+                        <li><strong>Biosecurity:</strong> Implement all-in-all-out system to prevent disease spread between batches</li>
+                        <li><strong>Record Keeping:</strong> Track performance of each batch to improve future cycles</li>
+                        <li><strong>Working Capital:</strong> Ensure you have ₱${(costPerBatch * 1.5).toLocaleString('en-PH', {maximumFractionDigits: 0})} reserve for unexpected expenses</li>
+                    </ul>
+                </div>
+
+                <div class="info-box" style="background: #e3f2fd; border-left-color: #2196F3;">
+                    <h4>📈 Annual Business Summary</h4>
+                    <ul>
+                        <li><strong>Total Investment Required:</strong> ₱${totalAnnualCost.toLocaleString('en-PH', {maximumFractionDigits: 2})}</li>
+                        <li><strong>Expected Annual Return:</strong> ₱${totalAnnualRevenue.toLocaleString('en-PH', {maximumFractionDigits: 2})}</li>
+                        <li><strong>Net Annual Income:</strong> ₱${totalAnnualProfit.toLocaleString('en-PH', {maximumFractionDigits: 2})}</li>
+                        <li><strong>Average Monthly Income:</strong> ₱${monthlyProfit.toLocaleString('en-PH', {maximumFractionDigits: 2})}</li>
+                        <li><strong>Pigs Marketed Annually:</strong> ${(survivingPigsPerBatch * batchesPerYear).toFixed(0)} heads</li>
+                        <li><strong>Total Live Weight Produced:</strong> ${(survivingPigsPerBatch * batchesPerYear * targetWeight).toLocaleString('en-PH', {maximumFractionDigits: 0})} kg</li>
+                    </ul>
+                </div>
+            `;
+
+            state.calculations.batch = {
+                totalAnnualCost,
+                totalAnnualRevenue,
+                totalAnnualProfit,
+                annualROI
+            };
+        }
+
+        // Helper function to generate batch schedule
+        function generateBatchSchedule(batches, daysBetween, growingDays, profitPerBatch) {
+            let html = '';
+            let currentDay = 0;
+            
+            for (let i = 1; i <= batches; i++) {
+                const harvestDay = currentDay + growingDays;
+                html += `
+                    <tr>
+                        <td>Batch ${i}</td>
+                        <td>Day ${currentDay} (${formatDate(currentDay)})</td>
+                        <td>Day ${harvestDay} (${formatDate(harvestDay)})</td>
+                        <td style="color: green; font-weight: bold;">₱${profitPerBatch.toLocaleString('en-PH', {maximumFractionDigits: 2})}</td>
+                    </tr>
+                `;
+                currentDay += daysBetween;
+            }
+            
+            return html;
+        }
+
+        // Helper function to format relative dates
+        function formatDate(daysFromNow) {
+            const date = new Date();
+            date.setDate(date.getDate() + daysFromNow);
+            return date.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        // Initialize with basic calculation on load
+        window.addEventListener('load', function() {
+            // Set default values if not set
+            if (!document.getElementById('pigletCost').value) {
+                document.getElementById('pigletCost').value = 3500;
+            }
+            if (!document.getElementById('sellingPrice').value) {
+                document.getElementById('sellingPrice').value = 140;
+            }
+            if (!document.getElementById('mortalityRate').value) {
+                document.getElementById('mortalityRate').value = 5;
+            }
+        });
+    </script>
+</body>
+</html>
